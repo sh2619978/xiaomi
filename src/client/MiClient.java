@@ -7,8 +7,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
@@ -19,36 +19,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class MiClient {
 
-    private static MiClient piaoClient;
+    private static MiClient miClient;
 
     private DefaultHttpClient client;
 
     private static List<Cookie> cookies = new ArrayList<Cookie>();
 
-    public static MiClient getPiaoClient() throws MiClientException {
-        return getPiaoClient(null);
-    }
-
-    public static MiClient getPiaoClient(String cerPath) throws MiClientException {
-        if (piaoClient == null) {
-            synchronized (MiClient.class) {
-                if (piaoClient == null) {
-                    if (StringUtils.isNotBlank(cerPath)) {
-                        piaoClient = new MiClient(cerPath);
-                    } else {
-                        piaoClient = new MiClient();
-                    }
-                }
-            }
-        }
-        return piaoClient;
-    }
-
-    private MiClient() throws MiClientException {
+    public MiClient() {
         this(MiClient.class.getResource("account.xiaomi.com").getFile());
     }
 
-    private MiClient(String cerPath) throws MiClientException {
+    private MiClient(String cerPath) {
         client = new DefaultHttpClient();
 
         SSLSocketFactory sslSocketFactory;
@@ -60,13 +41,12 @@ public class MiClient {
             // System.out.println(certificate);
 
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            // keyStore.load(new FileInputStream(new File("F:/piao_keystore")), "changeit".toCharArray());
             keyStore.load(null);
             keyStore.setCertificateEntry("piao", certificate);
 
             sslSocketFactory = new SSLSocketFactory(keyStore);
         } catch (Exception e) {
-            throw new MiClientException("httpclient初始化失败！", e);
+            throw new RuntimeException("httpclient初始化失败！", e);
         }
 
         Scheme scheme = new Scheme("https", 443, sslSocketFactory);
@@ -92,7 +72,11 @@ public class MiClient {
         return response;
 
     }
-    
+
+    public CookieStore getCookieStore() {
+        return client.getCookieStore();
+    }
+
     public static void main(String[] args) throws MiClientException {
         new MiClient();
     }
