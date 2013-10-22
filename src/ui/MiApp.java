@@ -19,7 +19,7 @@ import client.MiClientException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 
-public class PiaoApp {
+public class MiApp {
 
     protected Shell shell;
 
@@ -29,7 +29,7 @@ public class PiaoApp {
      */
     public static void main(String[] args) {
         try {
-            PiaoApp window = new PiaoApp();
+            MiApp window = new MiApp();
             window.open();
         } catch (Exception e) {
             e.printStackTrace();
