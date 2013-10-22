@@ -17,26 +17,26 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-public class PiaoClient {
+public class MiClient {
 
-    private static PiaoClient piaoClient;
+    private static MiClient piaoClient;
 
     private DefaultHttpClient client;
 
     private static List<Cookie> cookies = new ArrayList<Cookie>();
 
-    public static PiaoClient getPiaoClient() throws PiaoClientException {
+    public static MiClient getPiaoClient() throws MiClientException {
         return getPiaoClient(null);
     }
 
-    public static PiaoClient getPiaoClient(String cerPath) throws PiaoClientException {
+    public static MiClient getPiaoClient(String cerPath) throws MiClientException {
         if (piaoClient == null) {
-            synchronized (PiaoClient.class) {
+            synchronized (MiClient.class) {
                 if (piaoClient == null) {
                     if (StringUtils.isNotBlank(cerPath)) {
-                        piaoClient = new PiaoClient(cerPath);
+                        piaoClient = new MiClient(cerPath);
                     } else {
-                        piaoClient = new PiaoClient();
+                        piaoClient = new MiClient();
                     }
                 }
             }
@@ -44,11 +44,11 @@ public class PiaoClient {
         return piaoClient;
     }
 
-    private PiaoClient() throws PiaoClientException {
-        this(PiaoClient.class.getResource("account.xiaomi.com").getFile());
+    private MiClient() throws MiClientException {
+        this(MiClient.class.getResource("account.xiaomi.com").getFile());
     }
 
-    private PiaoClient(String cerPath) throws PiaoClientException {
+    private MiClient(String cerPath) throws MiClientException {
         client = new DefaultHttpClient();
 
         SSLSocketFactory sslSocketFactory;
@@ -66,7 +66,7 @@ public class PiaoClient {
 
             sslSocketFactory = new SSLSocketFactory(keyStore);
         } catch (Exception e) {
-            throw new PiaoClientException("httpclient初始化失败！", e);
+            throw new MiClientException("httpclient初始化失败！", e);
         }
 
         Scheme scheme = new Scheme("https", 443, sslSocketFactory);
@@ -76,13 +76,13 @@ public class PiaoClient {
         client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
     }
 
-    public final HttpResponse execute(HttpUriRequest request) throws PiaoClientException {
+    public final HttpResponse execute(HttpUriRequest request) throws MiClientException {
 
         HttpResponse response;
         try {
             response = client.execute(request);
         } catch (Exception e) {
-            throw new PiaoClientException("httpclient请求失败！", e);
+            throw new MiClientException("httpclient请求失败！", e);
         }
 
         // System.out.println(client.getCookieStore().getCookies());
@@ -93,7 +93,7 @@ public class PiaoClient {
 
     }
     
-    public static void main(String[] args) throws PiaoClientException {
-        new PiaoClient();
+    public static void main(String[] args) throws MiClientException {
+        new MiClient();
     }
 }

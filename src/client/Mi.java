@@ -10,7 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
 
-public class Piao {
+public class Mi {
 
     public static String LOGIN_URL = "https://account.xiaomi.com/pass/serviceLogin";
 
@@ -20,17 +20,17 @@ public class Piao {
 
     public static String CHARSET_NAME = "UTF-8";
     
-    private PiaoClient piaoClient;
+    private MiClient piaoClient;
     
-    public Piao() throws PiaoClientException {
+    public Mi() throws MiClientException {
             init();
     }
     
-    private void init() throws PiaoClientException {
-        piaoClient = PiaoClient.getPiaoClient();
+    private void init() throws MiClientException {
+        piaoClient = MiClient.getPiaoClient();
     }
     
-    public void requestLoginInit() throws PiaoClientException {
+    public void requestLoginInit() throws MiClientException {
         HttpGet get = new HttpGet(LOGIN_URL);
 
         HttpResponse response = piaoClient.execute(get);
@@ -44,13 +44,13 @@ public class Piao {
         System.out.println(result);
     }
     
-    public InputStream getCodeImageInputStream() throws PiaoClientException {
+    public InputStream getCodeImageInputStream() throws MiClientException {
         HttpGet imageCodeGet = new HttpGet(IMAGE_CODE_URL);
         HttpResponse imageCodeResponse = piaoClient.execute(imageCodeGet);
         try {
             return imageCodeResponse.getEntity().getContent();
         } catch (Exception e) {
-            throw new PiaoClientException(e);
+            throw new MiClientException(e);
         }
     }
     
@@ -69,7 +69,7 @@ public class Piao {
 //                .build();
 //        loginPost.setEntity(loginFormEntity);
         
-        new Piao().requestLoginInit();
+        new Mi().requestLoginInit();
 
     }
 

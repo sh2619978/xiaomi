@@ -14,8 +14,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import client.Piao;
-import client.PiaoClientException;
+import client.Mi;
+import client.MiClientException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 
@@ -112,7 +112,7 @@ public class PiaoApp {
                 InputStream input = null;
                 try {
                     input = piao.getCodeImageInputStream();
-                } catch (PiaoClientException e1) {
+                } catch (MiClientException e1) {
                     imageCodeLabel.setText("验证码获取异常！");
                 }
                 Image image = new Image(Display.getCurrent(), input);
@@ -127,8 +127,8 @@ public class PiaoApp {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    piao = new Piao();
-                } catch (PiaoClientException e1) {
+                    piao = new Mi();
+                } catch (MiClientException e1) {
                     styledText.append("httpclient初始化失败！");
                     if (e1.getCause() instanceof FileNotFoundException) {
                         styledText.append("找不到浏览器证书！");
@@ -151,7 +151,7 @@ public class PiaoApp {
 
     }
     
-    private Piao piao;
+    private Mi piao;
     private Text userText;
     private Text passText;
     private Text imageCodeText;
