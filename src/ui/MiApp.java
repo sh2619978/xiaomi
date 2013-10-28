@@ -1,7 +1,11 @@
 package ui;
 
+import java.awt.Desktop;
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
@@ -157,6 +161,8 @@ public class MiApp {
                                     Display.getDefault().syncExec(new Runnable() {
                                         public void run() {
                                             hdurlText.setText(hdurl);
+                                            hdurlText2.setText(hdurl.replace("http://t.hd.xiaomi.com/s/",
+                                                    "http://t.hd.xiaomi.com/"));
                                             styledText.append(fi + " - 购买地址获取成功！！！！！\n");
                                             styledText.setSelection(styledText.getCharCount());
                                             button.setEnabled(true);
@@ -201,6 +207,38 @@ public class MiApp {
         lblurl.setText("购买URL：");
 
         Button button_2 = new Button(shell, SWT.NONE);
+        button_2.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (!Desktop.isDesktopSupported()) {
+                    // 测试当前平台是否支持此类
+                    JOptionPane.showMessageDialog(null, "浏览器设置不支持");
+                    return;
+                }
+                if (StringUtils.isNotBlank(hdurlText.getText())) {
+                    // 用来打开系统默认浏览器浏览指定的URL
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        // 创建URI统一资源标识符
+                        URI uri = new URI(hdurlText.getText());
+                        // 使用默认浏览器打开超链接
+                        desktop.browse(uri);
+                    } catch (Exception ex) {
+                    }
+                }
+                if (StringUtils.isNotBlank(hdurlText2.getText())) {
+                    // 用来打开系统默认浏览器浏览指定的URL
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        // 创建URI统一资源标识符
+                        URI uri = new URI(hdurlText2.getText());
+                        // 使用默认浏览器打开超链接
+                        desktop.browse(uri);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+        });
         button_2.setBounds(192, 408, 80, 27);
         button_2.setText("打开浏览器");
 
