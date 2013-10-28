@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -55,6 +57,13 @@ public class MiApp {
      */
     protected void createContents() {
         shell = new Shell();
+        shell.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent arg0) {
+                running = false;
+                executorService.shutdownNow();
+                System.exit(0); // .........
+            }
+        });
         shell.setSize(797, 523);
         shell.setText("SWT Application");
 
@@ -132,41 +141,52 @@ public class MiApp {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                int tcount = 5;
+                running = true;
+                int tcount = 4;
                 for (int i = 0; i < tcount; i++) {
                     final int fi = i;
                     final Runnable paiduiRunnable = new Runnable() {
                         public void run() {
-                                while (true) {
-                                    final String hdurl = mi.paidui();
-                                    if (StringUtils.isNotBlank(hdurl)) {
-                                        Display.getDefault().asyncExec(new Runnable() {
-                                            public void run() {
-                                                hdurlText.setText(hdurl);
-                                                styledText.append("购买地址获取成功！！！！！\n");
-                                                styledText.setSelection(styledText.getCharCount());
-                                                button.setEnabled(true);
-                                            }
-                                        });
-                                        break;
-                                    }
-                                    
-                                    Display.getDefault().asyncExec(new Runnable() {
+                            while (true) {
+                                if (!running) {
+                                    break;
+                                }
+                                final String hdurl = mi.paidui();
+                                // final String hdurl = null;
+                                if (StringUtils.isNotBlank(hdurl)) {
+                                    Display.getDefault().syncExec(new Runnable() {
                                         public void run() {
-                                            styledText.append("购买地址获取失败.\n");
+                                            hdurlText.setText(hdurl);
+                                            styledText.append(fi + " - 购买地址获取成功！！！！！\n");
                                             styledText.setSelection(styledText.getCharCount());
+                                            button.setEnabled(true);
                                         }
                                     });
-                                    
+                                    break;
                                 }
-                                    executorService.shutdown();
+
+                                Display.getDefault().syncExec(new Runnable() {
+                                    public void run() {
+                                        styledText.append(fi + " - 购买地址获取失败.\n");
+                                        styledText.setSelection(styledText.getCharCount());
+                                    }
+                                });
+
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
                             }
+                            executorService.shutdownNow();
+                        }
                     };
                     executorService.execute(paiduiRunnable);
-                    
+
                 }
-                
-                styledText.append(tcount + "个线程开始请求排队...");
+
+                styledText.append(tcount + "个线程开始请求排队...\n");
                 button.setEnabled(false);
             }
         });
@@ -200,7 +220,8 @@ public class MiApp {
     private Text passText;
 
     private Mi mi;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
     private Text hdurlText;
     private Text hdurlText2;
+    private volatile boolean running;
 }

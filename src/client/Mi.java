@@ -157,16 +157,18 @@ public class Mi {
             String buyUrl = "http://t.hd.xiaomi.com/s/";
             String jsonData = StringUtils.substringBeforeLast(StringUtils.substringAfter(result, "hdcontrol("), ")");
             Map<String, Object> hdMap = JsonUtil.toBean(jsonData, Map.class);
-            Object statusObj = hdMap.get("status");
-            if (statusObj != null) {
-                Map<String, Object> statusMap = (Map<String, Object>) statusObj;
-                Object mpObj = statusMap.get("miphone");
-                if (mpObj != null) {
-                    Map<String, Object> mpMap = (Map<String, Object>) mpObj;
-                    if (mpMap.get("hdurl") != null) {
-                        String hdurlStr = (String) mpMap.get("hdurl");
-                        if (StringUtils.isNotBlank(hdurlStr)) {
-                            return buyUrl + hdurlStr;
+            if (hdMap != null) {
+                Object statusObj = hdMap.get("status");
+                if (statusObj != null) {
+                    Map<String, Object> statusMap = (Map<String, Object>) statusObj;
+                    Object mpObj = statusMap.get("miphone");
+                    if (mpObj != null) {
+                        Map<String, Object> mpMap = (Map<String, Object>) mpObj;
+                        if (mpMap.get("hdurl") != null) {
+                            String hdurlStr = (String) mpMap.get("hdurl");
+                            if (StringUtils.isNotBlank(hdurlStr)) {
+                                return buyUrl + hdurlStr;
+                            }
                         }
                     }
                 }

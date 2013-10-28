@@ -19,6 +19,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -70,6 +71,9 @@ public class MiClient {
                 return isRedirect;
             }
         });
+
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 5000); // 5秒超时
+        HttpConnectionParams.setSoTimeout(client.getParams(), 5000);
 
         return client;
     }
