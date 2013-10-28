@@ -97,15 +97,15 @@ public class MiApp {
         button_1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                Mi mi = new Mi();
                 try {
                     boolean login = mi.login(userText.getText(), passText.getText());
                     if (login) {
                         styledText.append("登录成功！\n");
-                        styledText.append(mi.getCookieStore() + "\n");
+                        styledText.append(mi.getCookieLines() + "\n");
                     } else {
                         styledText.append("登录失败！\n");
                     }
+                    styledText.append(mi.getCookieLines());
                 } catch (MiClientException e1) {
                     styledText.append(e1.toString());
                 }
@@ -125,7 +125,7 @@ public class MiApp {
                 }
                 InputStream input = null;
                 try {
-                    input = piao.getCodeImageInputStream();
+                    input = mi.getCodeImageInputStream();
                 } catch (MiClientException e1) {
                     imageCodeLabel.setText("验证码获取异常！");
                 }
@@ -141,7 +141,7 @@ public class MiApp {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    piao = new Mi();
+
                 } catch (Exception e1) {
                     styledText.append("httpclient初始化失败！");
                     if (e1.getCause() instanceof FileNotFoundException) {
@@ -161,9 +161,16 @@ public class MiApp {
         Label label4 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
         label4.setBounds(0, 93, 441, 56);
 
+        try {
+            mi = new Mi();
+            mi.visitIndex();
+            styledText.append(mi.getCookieLines());
+        } catch (Throwable miTh) {
+            styledText.append(miTh.toString());
+        }
     }
 
-    private Mi piao;
+    private Mi mi;
     private Text userText;
     private Text passText;
     private Text imageCodeText;

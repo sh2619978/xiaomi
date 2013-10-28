@@ -3,6 +3,7 @@ package client;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,6 +26,8 @@ public class Mi {
 
     public static String LOGIN_ACTION_URL = "https://account.xiaomi.com/pass/serviceLoginAuth2";
 
+    public static String PAIDUI_URL_PREFIX = "http://tc.hd.xiaomi.com/hdget?callback=hdcontrol&_=";
+
     public static String IMAGE_CODE_URL = "xxx";
 
     public static String CHARSET_NAME = "UTF-8";
@@ -31,11 +35,16 @@ public class Mi {
     private MiClient miClient;
 
     public Mi() {
-        init();
+        miClient = new MiClient();
     }
 
-    private void init() {
-        miClient = new MiClient();
+    public void visitIndex() {
+        HttpGet get = new HttpGet(LOGIN_URL);
+        try {
+            HttpResponse response = miClient.execute(get);
+        } catch (MiClientException e) {
+
+        }
     }
 
     public InputStream getCodeImageInputStream() throws MiClientException {
@@ -71,7 +80,16 @@ public class Mi {
         HttpResponse loginResponse = miClient.execute(loginPost);
         try {
             String loginResult = EntityUtils.toString(loginResponse.getEntity());
-            if (loginResult.contains("http://account.xiaomi.com/pass/userInfo?userId=")) {
+            // if (loginResponse.getStatusLine().getStatusCode() == 302
+            // && loginResult.contains("http://account.xiaomi.com/")) {
+            //
+            // String userId = getCookie("userId").getValue();
+            // HttpGet userGet = new HttpGet("https://account.xiaomi.com/pass/userInfo?userId=" + userId);
+            // miClient.execute(userGet);
+            //
+            // return true;
+            // }
+            if (loginResult.contains("<title>小米帐户</title>")) {
                 return true;
             }
         } catch (Exception e) {
@@ -98,6 +116,21 @@ public class Mi {
 
     public CookieStore getCookieStore() {
         return miClient.getCookieStore();
+    }
+
+    public String getCookieLines() {
+        return miClient.getCookieLines();
+    }
+
+    public Cookie getCookie(String name) {
+        CookieStore cookieStore = miClient.getCookieStore();
+        List<Cookie> cookies = cookieStore.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+                return cookie;
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) throws Exception {
