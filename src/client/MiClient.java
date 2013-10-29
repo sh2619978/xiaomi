@@ -76,8 +76,8 @@ public class MiClient {
             }
         });
 
-        HttpConnectionParams.setConnectionTimeout(client.getParams(), 5000); // 5秒超时
-        HttpConnectionParams.setSoTimeout(client.getParams(), 5000);
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 6000); // 5秒超时
+        HttpConnectionParams.setSoTimeout(client.getParams(), 6000);
 
         return client;
     }
