@@ -176,28 +176,6 @@ public class Mi {
                             }
                         }
                     }
-
-                    Object mbObj = statusMap.get("mibox");
-                    if (mbObj != null) {
-                        Map<String, Object> mbMap = (Map<String, Object>) mbObj;
-                        if (mbMap.get("hdurl") != null) {
-                            String hdurlStr = (String) mbMap.get("hdurl");
-                            if (StringUtils.isNotBlank(hdurlStr)) {
-                                resultMap.put("miboxhdurl", buyUrl + hdurlStr);
-                            }
-                        }
-                    }
-
-                    Object mtObj = statusMap.get("mitv");
-                    if (mtObj != null) {
-                        Map<String, Object> mtMap = (Map<String, Object>) mtObj;
-                        if (mtMap.get("hdurl") != null) {
-                            String hdurlStr = (String) mtMap.get("hdurl");
-                            if (StringUtils.isNotBlank(hdurlStr)) {
-                                resultMap.put("mitvhdurl", buyUrl + hdurlStr);
-                            }
-                        }
-                    }
                 }
             }
         }

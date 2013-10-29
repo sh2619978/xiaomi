@@ -163,7 +163,8 @@ public class MiApp {
                                         public void run() {
                                             hdurlText.setText(StringUtils.defaultString(hdurlMap.get("miphonehdurl"),
                                                     ""));
-                                            hdurlText2.setText(StringUtils.defaultString(hdurlMap.get("mitvhdurl"), ""));
+                                            hdurlText2.setText(StringUtils.defaultString(hdurlMap.get("miphonehdurl"),
+                                                    ""));
                                             styledText.append(fi + " - 购买地址获取成功！！！！！\n");
                                             styledText.setSelection(styledText.getCharCount());
                                             button.setEnabled(true);
