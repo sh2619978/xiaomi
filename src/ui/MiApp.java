@@ -77,7 +77,7 @@ public class MiApp {
         label1.setText("用户名：");
 
         userText = new Text(shell, SWT.BORDER);
-        userText.setText("sh2619978@126.com");
+        userText.setText("13341052808");
         userText.setBounds(82, 26, 150, 23);
 
         Label label2 = new Label(shell, SWT.NONE);
@@ -85,7 +85,7 @@ public class MiApp {
         label2.setText("密  码：");
 
         passText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-        passText.setText("ricebean2013");
+        passText.setText("baocm000");
         passText.setBounds(82, 72, 150, 23);
 
         final StyledText styledText = new StyledText(shell, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);

@@ -34,8 +34,12 @@ public class MiClient {
         SSLSocketFactory sslSocketFactory;
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            // X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(new
+            // FileInputStream(
+            // MiClient.class.getResource("account.xiaomi.com").getFile()));
+
             X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(new FileInputStream(
-                    MiClient.class.getResource("account.xiaomi.com").getFile()));
+                    "E:/account.xiaomi.com"));
 
             // System.out.println(certificate);
 
