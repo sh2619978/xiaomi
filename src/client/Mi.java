@@ -2,6 +2,7 @@ package client;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +140,8 @@ public class Mi {
         return null;
     }
 
-    public String paidui() {
+    public Map<String, String> paidui() {
+        Map<String, String> resultMap = new HashMap<String, String>();
         String result = null;
         try {
             HttpGet get = new HttpGet(PAIDUI_URL_PREFIX + System.currentTimeMillis());
@@ -148,33 +150,58 @@ public class Mi {
 
             result = EntityUtils.toString(entity, CHARSET_NAME);
         } catch (Exception e) {
-            return null;
+            return resultMap;
         }
         if (is404Page(result)) {
-            return null;
+            return resultMap;
         }
         if (result.contains("hdcontrol")) {
             String buyUrl = "http://t.hd.xiaomi.com/s/";
-            String jsonData = StringUtils.substringBeforeLast(StringUtils.substringAfter(result, "hdcontrol("), ")");
+            String jsonData = StringUtils.substringBeforeLast(StringUtils.substringAfter(result, "hdcontrol("), ")")
+                    .trim();
             Map<String, Object> hdMap = JsonUtil.toBean(jsonData, Map.class);
             if (hdMap != null) {
                 Object statusObj = hdMap.get("status");
                 if (statusObj != null) {
                     Map<String, Object> statusMap = (Map<String, Object>) statusObj;
+
+                    // miphone
                     Object mpObj = statusMap.get("miphone");
                     if (mpObj != null) {
                         Map<String, Object> mpMap = (Map<String, Object>) mpObj;
                         if (mpMap.get("hdurl") != null) {
                             String hdurlStr = (String) mpMap.get("hdurl");
                             if (StringUtils.isNotBlank(hdurlStr)) {
-                                return buyUrl + hdurlStr;
+                                resultMap.put("miphonehdurl", buyUrl + hdurlStr);
+                            }
+                        }
+                    }
+
+                    Object mbObj = statusMap.get("mibox");
+                    if (mbObj != null) {
+                        Map<String, Object> mbMap = (Map<String, Object>) mbObj;
+                        if (mbMap.get("hdurl") != null) {
+                            String hdurlStr = (String) mbMap.get("hdurl");
+                            if (StringUtils.isNotBlank(hdurlStr)) {
+                                resultMap.put("miboxhdurl", buyUrl + hdurlStr);
+                            }
+                        }
+                    }
+
+                    Object mtObj = statusMap.get("mitv");
+                    if (mtObj != null) {
+                        Map<String, Object> mtMap = (Map<String, Object>) mtObj;
+                        if (mtMap.get("hdurl") != null) {
+                            String hdurlStr = (String) mtMap.get("hdurl");
+                            if (StringUtils.isNotBlank(hdurlStr)) {
+                                resultMap.put("mitvhdurl", buyUrl + hdurlStr);
                             }
                         }
                     }
                 }
             }
         }
-        return null;
+        return resultMap;
     }
 
     public boolean isLogin() {

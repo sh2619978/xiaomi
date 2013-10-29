@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.Desktop;
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -155,14 +156,14 @@ public class MiApp {
                                 if (!running) {
                                     break;
                                 }
-                                final String hdurl = mi.paidui();
+                                final Map<String, String> hdurlMap = mi.paidui();
                                 // final String hdurl = null;
-                                if (StringUtils.isNotBlank(hdurl)) {
+                                if (hdurlMap != null && hdurlMap.size() > 0) {
                                     Display.getDefault().syncExec(new Runnable() {
                                         public void run() {
-                                            hdurlText.setText(hdurl);
-                                            hdurlText2.setText(hdurl.replace("http://t.hd.xiaomi.com/s/",
-                                                    "http://t.hd.xiaomi.com/"));
+                                            hdurlText.setText(StringUtils.defaultString(hdurlMap.get("miphonehdurl"),
+                                                    ""));
+                                            hdurlText2.setText(StringUtils.defaultString(hdurlMap.get("mitvhdurl"), ""));
                                             styledText.append(fi + " - 购买地址获取成功！！！！！\n");
                                             styledText.setSelection(styledText.getCharCount());
                                             button.setEnabled(true);
