@@ -19,6 +19,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -126,6 +127,11 @@ public class MiClient {
             sb.append(cookie.getName()).append(" = ").append(cookie.getValue()).append("\n");
         }
         return sb.toString();
+    }
+
+    public MiClient addCookie(String name, String value) {
+        cookieStore.addCookie(new BasicClientCookie(name, value));
+        return this;
     }
 
     public static void main(String[] args) throws MiClientException {

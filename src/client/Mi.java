@@ -45,10 +45,21 @@ public class Mi {
     }
 
     public void visitIndex() {
-        HttpGet get = new HttpGet(LOGIN_URL);
+        HttpGet get = new HttpGet("http://www.xiaomi.com");
         try {
             HttpResponse response = miClient.execute(get);
-        } catch (MiClientException e) {
+            EntityUtils.toString(response.getEntity(), CHARSET_NAME);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void visitOpenIndex() {
+        HttpGet get = new HttpGet("http://p.www.xiaomi.com/open/index.html");
+        try {
+            HttpResponse response = miClient.execute(get);
+            EntityUtils.toString(response.getEntity(), CHARSET_NAME);
+        } catch (Exception e) {
 
         }
     }
@@ -97,6 +108,20 @@ public class Mi {
             // }
             if (loginResult.contains("<title>小米帐户</title>")) {
                 login = true;
+
+                visitOpenIndex();
+
+                String userId = getCookie("userId").getValue();
+
+                // miClient.addCookie("xmuuid", "XMGUEST-ED2E7AE0-3640-11E3-B5E7-B1F7D72BC309");
+                miClient.addCookie("mstuid", "1381913824222_4302");
+                miClient.addCookie("xm_difft_hd", "0");
+                miClient.addCookie("lastsource", "p.www.xiaomi.com");
+                miClient.addCookie("xm_user_www_num", "0");
+                miClient.addCookie("XM_" + userId + "_UN", userId);
+                miClient.addCookie("mstprevpid", "H-A-A1_0");
+                miClient.addCookie("prevtarget", "http://p.www.xiaomi.com/open/index.html");
+
                 return true;
             }
         } catch (Exception e) {
@@ -149,14 +174,14 @@ public class Mi {
             HttpEntity entity = response.getEntity();
 
             result = EntityUtils.toString(entity, CHARSET_NAME);
-            
-            System.out.println(get);
-            System.out.println(result);
+
+            // System.out.println(get);
+            // System.out.println(result);
         } catch (Exception e) {
             resultMap.put("msg", "请求发生异常: " + e);
             return resultMap;
         }
-        
+
         if (is404Page(result)) {
             resultMap.put("msg", "返回页面404");
             return resultMap;

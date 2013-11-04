@@ -103,6 +103,10 @@ public class MiApp {
         styledText.setBounds(310, 10, 461, 465);
         styledText.setSelection(styledText.getCharCount());
 
+        final Label label = new Label(shell, SWT.NONE);
+        label.setText("请先登录！");
+        label.setBounds(31, 133, 61, 17);
+
         Button button_1 = new Button(shell, SWT.NONE);
         button_1.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -115,6 +119,7 @@ public class MiApp {
                     boolean login = mi.login(userText.getText(), passText.getText());
                     if (login) {
                         styledText.append("登录成功！\n");
+                        label.setText("已经登录！");
                     } else {
                         styledText.append("登录失败！\n");
                     }
@@ -272,6 +277,17 @@ public class MiApp {
 
         hdurlText2 = new Text(shell, SWT.BORDER);
         hdurlText2.setBounds(10, 364, 262, 23);
+
+        Button btnNewButton = new Button(shell, SWT.NONE);
+        btnNewButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                styledText.append(mi.getCookieLines());
+                styledText.setSelection(styledText.getCharCount());
+            }
+        });
+        btnNewButton.setBounds(23, 448, 80, 27);
+        btnNewButton.setText("查看cookie");
 
         try {
             mi = new Mi();
