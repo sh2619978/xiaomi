@@ -149,10 +149,16 @@ public class Mi {
             HttpEntity entity = response.getEntity();
 
             result = EntityUtils.toString(entity, CHARSET_NAME);
+            
+            System.out.println(get);
+            System.out.println(result);
         } catch (Exception e) {
+            resultMap.put("msg", "请求发生异常: " + e);
             return resultMap;
         }
+        
         if (is404Page(result)) {
+            resultMap.put("msg", "返回页面404");
             return resultMap;
         }
         if (result.contains("hdcontrol")) {
@@ -164,20 +170,36 @@ public class Mi {
                 Object statusObj = hdMap.get("status");
                 if (statusObj != null) {
                     Map<String, Object> statusMap = (Map<String, Object>) statusObj;
-
-                    // miphone
-                    Object mpObj = statusMap.get("miphone");
-                    if (mpObj != null) {
-                        Map<String, Object> mpMap = (Map<String, Object>) mpObj;
-                        if (mpMap.get("hdurl") != null) {
-                            String hdurlStr = (String) mpMap.get("hdurl");
-                            if (StringUtils.isNotBlank(hdurlStr)) {
-                                resultMap.put("miphonehdurl", buyUrl + hdurlStr);
+                    Object allowObj = statusMap.get("allow");
+                    if (allowObj != null && ((Boolean) allowObj) == true) {
+                        // miphone
+                        Object mpObj = statusMap.get("miphone");
+                        if (mpObj != null) {
+                            Map<String, Object> mpMap = (Map<String, Object>) mpObj;
+                            if (mpMap.get("hdurl") != null) {
+                                String hdurlStr = (String) mpMap.get("hdurl");
+                                if (StringUtils.isNotBlank(hdurlStr)) {
+                                    resultMap.put("miphonehdurl", buyUrl + hdurlStr);
+                                } else {
+                                    resultMap.put("msg", "排队地址返回miphone的hdurl为空");
+                                }
+                            } else {
+                                resultMap.put("msg", "排队地址返回miphone的hdurl为空");
                             }
+                        } else {
+                            resultMap.put("msg", "排队地址返回miphone对象为空");
                         }
+                    } else {
+                        resultMap.put("msg", "排队地址返回allow为false");
                     }
+                } else {
+                    resultMap.put("msg", "排队地址返回status为空");
                 }
+            } else {
+                resultMap.put("msg", "排队地址返回数据不正确");
             }
+        } else {
+            resultMap.put("msg", "排队地址返回没有hdcontrol()");
         }
         return resultMap;
     }

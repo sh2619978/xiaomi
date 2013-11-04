@@ -11,13 +11,14 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -62,13 +63,22 @@ public class MiApp {
      */
     protected void createContents() {
         shell = new Shell();
-        shell.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent arg0) {
-                running = false;
-                executorService.shutdownNow();
-                System.exit(0); // .........
+        shell.addListener(SWT.Close, new Listener() {
+            public void handleEvent(Event event) {
+                int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO;
+                MessageBox messageBox = new MessageBox(shell, style);
+                messageBox.setText("信息");
+                messageBox.setMessage("确认关闭?");
+                if (messageBox.open() == SWT.YES) {
+                    running = false;
+                    executorService.shutdownNow();
+                    System.exit(0); // .........
+                } else {
+                    event.doit = false;
+                }
             }
         });
+
         shell.setSize(797, 523);
         shell.setText("SWT Application");
 
@@ -143,6 +153,11 @@ public class MiApp {
         label4.setBounds(272, 10, 28, 465);
 
         final Button button = new Button(shell, SWT.NONE);
+        button.setBounds(38, 219, 84, 32);
+        button.setText("开始请求排队");
+
+        final Button stopQueueButton = new Button(shell, SWT.NONE);
+
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -158,7 +173,7 @@ public class MiApp {
                                 }
                                 final Map<String, String> hdurlMap = mi.paidui();
                                 // final String hdurl = null;
-                                if (hdurlMap != null && hdurlMap.size() > 0) {
+                                if (hdurlMap != null && StringUtils.isNotBlank(hdurlMap.get("miphonehdurl"))) {
                                     Display.getDefault().syncExec(new Runnable() {
                                         public void run() {
                                             hdurlText.setText(StringUtils.defaultString(hdurlMap.get("miphonehdurl"),
@@ -175,7 +190,8 @@ public class MiApp {
 
                                 Display.getDefault().syncExec(new Runnable() {
                                     public void run() {
-                                        styledText.append(fi + " - 购买地址获取失败.\n");
+                                        styledText.append(fi + " - 购买地址获取失败.  ");
+                                        styledText.append(hdurlMap.get("msg") + "\n");
                                         styledText.setSelection(styledText.getCharCount());
                                     }
                                 });
@@ -187,19 +203,29 @@ public class MiApp {
                                     e.printStackTrace();
                                 }
                             }
-                            executorService.shutdownNow();
+                            running = false;
                         }
                     };
                     executorService.execute(paiduiRunnable);
-
                 }
 
                 styledText.append(tcount + "个线程开始请求排队...\n");
                 button.setEnabled(false);
+                stopQueueButton.setEnabled(true);
             }
         });
-        button.setBounds(70, 219, 84, 32);
-        button.setText("开始请求排队");
+
+        stopQueueButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                running = false;
+                button.setEnabled(true);
+                stopQueueButton.setEnabled(false);
+            }
+        });
+        stopQueueButton.setBounds(152, 219, 80, 32);
+        stopQueueButton.setText("停止排队");
+        stopQueueButton.setEnabled(false);
 
         hdurlText = new Text(shell, SWT.BORDER);
         hdurlText.setBounds(10, 319, 262, 23);
