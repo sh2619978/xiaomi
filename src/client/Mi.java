@@ -121,6 +121,7 @@ public class Mi {
                 miClient.addCookie("XM_" + userId + "_UN", userId);
                 miClient.addCookie("mstprevpid", "H-A-A1_0");
                 miClient.addCookie("prevtarget", "http://p.www.xiaomi.com/open/index.html");
+                miClient.addCookie("xm_firbut_hd", "1");
 
                 return true;
             }

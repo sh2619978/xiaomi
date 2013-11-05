@@ -87,7 +87,7 @@ public class MiApp {
         label1.setText("用户名：");
 
         userText = new Text(shell, SWT.BORDER);
-        userText.setText("13341052808");
+        userText.setText("15311261505");
         userText.setBounds(82, 26, 150, 23);
 
         Label label2 = new Label(shell, SWT.NONE);
